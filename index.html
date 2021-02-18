@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>d3js dynamic HTML table</title>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <style>
+            body {background-color: white;}
+            .special {color: rgb(29, 106, 206); font-weight: bold; text-align: center;
+                      text-decoration-line: underline; font-size: 21pt;}
+            .title {color:rgb(0, 0, 0); text-align: center; font-size: 18pt;}
+            .text{color: black; text-align:justify ; font-size: 16pt;}
+            .operator {font-weight: bold;}
+            .email {color:rgb(39, 37, 37); font-size: 14pt; text-align: center;}
+            th {
+                color: black;
+            }
+            p {
+                color: black; font-size: medium;
+            }
+            .note {
+                color: grey; font-size: small;
+            }
+            .name {
+                color: black;
+                border: solid black 1pt;
+            }
+            .name:hover {
+                border-width: 2pt;
+            }
+            .x {
+                color: black;
+                border: solid black 1pt;
+            }
+            .x:hover {
+                border-width: 2pt;
+            }
+            .y {
+                color: black;
+                border: solid black 1pt;
+            }
+            .y:hover {
+                border-width: 2pt;
+            }
+            .length {
+                color: black;
+                border: solid black 1pt;
+            }
+            .length:hover {
+                border-width: 2pt;
+            }
+            .height {
+                color: black;
+                border: solid black 1pt;
+            }
+            .height:hover {
+                border-width: 2pt;
+            }
+            .color {
+                color: black;
+                border: solid black 1pt;
+            }
+            .color:hover {
+                border-width: 2pt;
+            }
+                     
+        </style>
+    </head>
+
+    <body>
+        <br>
+        <div class="special">SECOND ASSIGNMENT: DYNAMIC TABLE</div>
+        <br>
+        <div class="title">MARTA ILUNDAIN MARTÍNEZ</div>
+        <br>
+        <div class="email">100439245@alumnos.uc3m.es</div>
+        <br>
+        <div class="text">In this second assignment, we have created a page where we can select between 
+            two data sets (Data1 and Data2) and it is shown in a table. Also, we can select the numeric 
+            columns of these datasets and calculate the mean for each column.</div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+        <br>
+        <p>First, we select the data:</p>
+        <select id="selectBox" onChange="select()">
+            <option selected disabled>Select data</option>
+            <option value="1">Data1</option>
+            <option value="2">Data2</option>
+        </select>
+        <br>
+        <p>We can also choose a numeric column of this dataset and its mean is shown in the following box:</p>
+        <select id="size" onChange="meanvar()">
+            <option value="">Select variable</option>
+        </select>
+
+        <br>
+        <br>
+
+        <input type="text" id="mean" placeholder="mean" readonly onfocus="this.blur();">
+        <div class="note">Note: the first variable that is chosen will show "undefined", but the mean of the second variable selected will be shown correctly. To show the mean of the first selected variable, select it a second time.</div>
+
+        <table>
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+
+        <script>
+            var data=[]
+            $(document).ready(function () {
+                $("#selectBox").change(function () {
+                    var val = $(this).val();
+                    if (val == "1") {
+                        $("#size").html("<option selected disabled>Select variable</option><option value='x1'>x</option><option value='y1'>y</option>");
+                        } else if (val == "2") {
+                            $("#size").html("<option selected disabled>Select variable</option><option value='length2'>length</option><option value='height2'>height</option><option value='color2'>color</option>");
+                        } 
+                });
+            });
+
+            function select() { 
+                d3.selectAll("table").remove()
+                if(document.getElementById("selectBox").value=="1"){
+                    csv_url_1 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data1.csv"
+                    d3.csv(csv_url_1,
+                    (d,i,c) => {
+                        cs = {
+                            "name":"name",
+                            "x": "x",
+                            "y":"y"
+                        }
+                        if (i==0) {
+                            d3.select("body").insert("table")
+                            .append("tr")
+                            .selectAll("th")
+                            .data(c).enter()
+                            .append("th").text(e => cs[e])
+                        }
+                        d3.select("table")
+                        .append("tr")
+                        .selectAll("td")
+                        .data(c).enter()
+                        .append("td")
+                        .text(e => d[e])
+                        .attr("class", e => e)
+                    })
+
+
+                }  else if(document.getElementById("selectBox").value=="2") {
+                    csv_url_2 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data2.csv"
+                    d3.csv(csv_url_2,
+                    (d,i,c) => {
+                        cs = {
+                            "name":"name",
+                            "length": "length",
+                            "height":"height",
+                            "color": "color"
+                        }
+                        if (i==0) {
+                            d3.select("body").insert("table")
+                            .append("tr")
+                            .selectAll("th")
+                            .data(c).enter()
+                            .append("th").text(e => cs[e])
+                        }
+                        d3.select("table")
+                        .append("tr")
+                        .selectAll("td")
+                        .data(c).enter()
+                        .append("td")
+                        .text(e => d[e])
+                        .attr("class", e => e)
+                    })
+                }
+            }
+
+            function meanvar() {
+                var mean
+                if(document.getElementById("size").value=="x1"){
+                    csv_url_1 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data1.csv"
+                    d3.csv(csv_url_1).then(tidying)
+                    x = Array.from(data.map(e => e.x))
+                    mean = d3.mean(x)
+                } else if(document.getElementById("size").value=="y1") {
+                    csv_url_1 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data1.csv"
+                    d3.csv(csv_url_1).then(tidying)
+                    y = Array.from(data.map(e => e.y))
+                    mean = d3.mean(y)
+                } else if(document.getElementById("size").value=="length2") {
+                    csv_url_2 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data2.csv"
+                    d3.csv(csv_url_2).then(tidying)
+                    length = Array.from(data.map(e => e.length))
+                    mean = d3.mean(length)
+                } else if(document.getElementById("size").value=="height2") {
+                    csv_url_2 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data2.csv"
+                    d3.csv(csv_url_2).then(tidying)
+                    height = Array.from(data.map(e => e.height))
+                    mean = d3.mean(height)
+                } else if(document.getElementById("size").value=="color2") {
+                    csv_url_2 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data2.csv"
+                    d3.csv(csv_url_2).then(tidying)
+                    color = Array.from(data.map(e => e.color))
+                    mean = d3.mean(color)
+                }
+                var output=document.getElementById("mean");
+                output.value=mean;
+            }
+
+            function tidying(d) {
+                data = d
+            }
+
+        </script>
+    </body>
+</html>
+
