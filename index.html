@@ -62,7 +62,6 @@
             .color:hover {
                 border-width: 2pt;
             }
-                     
         </style>
     </head>
 
@@ -142,8 +141,6 @@
                         .text(e => d[e])
                         .attr("class", e => e)
                     })
-
-
                 }  else if(document.getElementById("selectBox").value=="2") {
                     csv_url_2 = false ? "category-brands.csv" : "https://raw.githubusercontent.com/mim4/dynamic_table/main/data2.csv"
                     d3.csv(csv_url_2,
@@ -207,7 +204,6 @@
             function tidying(d) {
                 data = d
             }
-
         </script>
     </body>
 </html>
